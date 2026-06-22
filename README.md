@@ -25,6 +25,7 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
+
 - [ x] Describe the game's purpose.
 A number-guessing game where the player selects a difficulty (Easy, Normal, Hard), then tries to guess a randomly generated secret number within a limited number of attempts. Each guess gives feedback (“Go Higher” or “Go Lower”), and the player earns or loses score based on performance until they either guess correctly or run out of attempts.
 - [ x] Detail which bugs you found.
@@ -44,16 +45,17 @@ A number-guessing game where the player selects a difficulty (Easy, Normal, Hard
 
 Describe your fixed game in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. The user opens the game and is shown a guessing interface with a selected difficulty (Easy, Normal, or Hard). The game displays the valid range (for example, 1–100 in Normal mode), along with the number of attempts allowed and current score.
+2. The user enters an initial guess (for example, guess = 1). The game responds with a hint like “Go Higher” if the secret number is larger, or “Go Lower” if the guess is too high.
+3. The user continues guessing (for example, guess = 20 or guess = 38), and the game consistently updates the hint correctly based on the comparison with the secret number.
+4. After each valid guess, the attempt counter decreases correctly and the score updates based on performance. The info bar reflects the current attempts left and score in real time
+5. If the user eventually enters the correct number (for example, guess = 97), the game displays a win message, triggers a success state, and shows the final score.
+6. If the user runs out of attempts before guessing correctly, the game ends with a “Game Over” message and reveals the secret number.
 
 **Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
 
 ## 🧪 Test Results
-
+This project was tested using both Streamlit gameplay and automated pytest tests.
 ```
 
 pytest tests/

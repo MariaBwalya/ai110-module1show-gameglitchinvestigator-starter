@@ -167,8 +167,9 @@ if submit:
 # -------------------------
 # INFO BAR (FIXED - NO st.empty)
 # -------------------------
+
 st.info(
-    f"Guess a number between {low} and {high}. "
+    f"Range: {low}-{high} | "
     f"Attempts left: {attempt_limit - st.session_state.attempts} | "
     f"Score: {st.session_state.score}"
 )
