@@ -64,34 +64,34 @@ platform win32 -- Python 3.13.7, pytest-9.1.0, pluggy-1.6.0 -- C:\Users\themb\Ap
 cachedir: .pytest_cache
 rootdir: C:\Users\themb\OneDrive\Documents\ai110-module1show-gameglitchinvestigator-starter
 plugins: anyio-4.14.0
-collected 24 items                                                                                 
+collected 23 items                                                                                 
 
 tests/test_game_logic.py::test_winning_guess PASSED                                          [  4%]
-tests/test_game_logic.py::test_too_high_message_tells_player_to_go_lower PASSED              [  8%]
-tests/test_game_logic.py::test_too_low_message_tells_player_to_go_higher PASSED              [ 12%]
-tests/test_game_logic.py::test_too_high_message_correct_when_secret_is_string PASSED         [ 16%]
-tests/test_game_logic.py::test_too_low_message_correct_when_secret_is_string PASSED          [ 20%]
-tests/test_game_logic.py::test_easy_rejects_guess_above_range PASSED                         [ 25%]
-tests/test_game_logic.py::test_hard_rejects_guess_above_range PASSED                         [ 29%]
-tests/test_game_logic.py::test_hard_range_upper_bound_is_150 PASSED                          [ 33%]
-tests/test_game_logic.py::test_hard_range_is_larger_than_normal PASSED                       [ 37%]
-tests/test_game_logic.py::test_new_game_state_resets_status_to_playing PASSED                [ 41%]
-tests/test_game_logic.py::test_new_game_state_respects_difficulty_range PASSED               [ 45%]
-tests/test_game_logic.py::test_win_on_first_attempt_gives_100_points PASSED                  [ 50%]
-tests/test_game_logic.py::test_win_on_later_attempt_scores_less PASSED                       [ 54%]
-tests/test_game_logic.py::test_win_score_floor_is_10 PASSED                                  [ 58%]
-tests/test_game_logic.py::test_too_high_on_even_attempt_deducts_points PASSED                [ 62%]
-tests/test_game_logic.py::test_too_high_on_odd_attempt_deducts_points PASSED                 [ 66%]
-tests/test_game_logic.py::test_too_high_and_too_low_penalize_equally PASSED                  [ 70%]
-tests/test_game_logic.py::test_wrong_guess_score_never_goes_below_zero PASSED                [ 75%]
-tests/test_game_logic.py::test_multiple_wrong_guesses_stay_at_zero PASSED                    [ 79%]
-tests/test_game_logic.py::test_final_score_clamps_negative_to_zero PASSED                    [ 83%]
-tests/test_game_logic.py::test_final_score_preserves_positive_score PASSED                   [ 87%]
-tests/test_game_logic.py::test_final_score_is_zero_when_raw_is_zero PASSED                   [ 91%]
-tests/test_game_logic.py::test_info_bar_shows_correct_attempts_before_any_guess PASSED       [ 95%]
-tests/test_game_logic.py::test_info_bar_decrements_immediately_after_submit PASSED           [100%]
+tests/test_game_logic.py::test_too_high_returns_lower_hint PASSED                            [  8%]
+tests/test_game_logic.py::test_too_low_returns_higher_hint PASSED                            [ 13%]
+tests/test_game_logic.py::test_hint_works_with_string_secret PASSED                          [ 17%]
+tests/test_game_logic.py::test_hint_works_with_string_secret_low PASSED                      [ 21%]
+tests/test_game_logic.py::test_easy_range_validation PASSED                                  [ 26%]
+tests/test_game_logic.py::test_hard_range_validation PASSED                                  [ 30%]
+tests/test_game_logic.py::test_hard_upper_bound_is_150 PASSED                                [ 34%]
+tests/test_game_logic.py::test_hard_is_larger_than_normal PASSED                             [ 39%]
+tests/test_game_logic.py::test_new_game_state_is_playing PASSED                              [ 43%]
+tests/test_game_logic.py::test_new_game_state_within_range PASSED                            [ 47%]
+tests/test_game_logic.py::test_win_first_attempt_score PASSED                                [ 52%]
+tests/test_game_logic.py::test_win_later_attempt_less_score PASSED                           [ 56%]
+tests/test_game_logic.py::test_win_score_floor PASSED                                        [ 60%]
+tests/test_game_logic.py::test_penalty_applies_to_too_high PASSED                            [ 65%]
+tests/test_game_logic.py::test_penalty_applies_to_too_low PASSED                             [ 69%]
+tests/test_game_logic.py::test_penalties_are_equal PASSED                                    [ 73%]
+tests/test_game_logic.py::test_score_never_negative PASSED                                   [ 78%]
+tests/test_game_logic.py::test_multiple_penalties_stay_zero PASSED                           [ 82%]
+tests/test_game_logic.py::test_final_score_clamps_negative PASSED                            [ 86%]
+tests/test_game_logic.py::test_final_score_positive PASSED                                   [ 91%]
+tests/test_game_logic.py::test_info_bar_shows_attempts_initially PASSED                      [ 95%]
+tests/test_game_logic.py::test_info_bar_updates_after_guess PASSED                           [100%]
 
-======================================= 24 passed in 2.46s ========================================
+======================================= 23 passed in 1.06s ========================================
+
 
 
 
