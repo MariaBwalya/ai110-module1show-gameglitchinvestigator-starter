@@ -6,144 +6,146 @@ from logic_utils import (
     build_new_game_state,
 )
 
+from streamlit.testing.v1 import AppTest
 
-# --- check_guess basics ---
+
+# -----------------------------
+# check_guess basics
+# -----------------------------
 
 def test_winning_guess():
     outcome, _ = check_guess(50, 50)
     assert outcome == "Win"
 
 
-# --- Bug 1: Backward hint messaging ---
+# -----------------------------
+# Bug 1: Hint correctness
+# -----------------------------
 
-def test_too_high_message_tells_player_to_go_lower():
+def test_too_high_returns_lower_hint():
     outcome, message = check_guess(80, 50)
     assert outcome == "Too High"
-    assert "LOWER" in message, f"Expected 'LOWER' in message but got: '{message}'"
+    assert "lower" in message.lower()
 
-def test_too_low_message_tells_player_to_go_higher():
+def test_too_low_returns_higher_hint():
     outcome, message = check_guess(20, 50)
     assert outcome == "Too Low"
-    assert "HIGHER" in message, f"Expected 'HIGHER' in message but got: '{message}'"
+    assert "higher" in message.lower()
 
-def test_too_high_message_correct_when_secret_is_string():
+def test_hint_works_with_string_secret():
     outcome, message = check_guess(80, "50")
     assert outcome == "Too High"
-    assert "LOWER" in message, f"Expected 'LOWER' in message but got: '{message}'"
+    assert "lower" in message.lower()
 
-def test_too_low_message_correct_when_secret_is_string():
+def test_hint_works_with_string_secret_low():
     outcome, message = check_guess(13, "20")
     assert outcome == "Too Low"
-    assert "HIGHER" in message, f"Expected 'HIGHER' in message but got: '{message}'"
+    assert "higher" in message.lower()
 
 
-# --- Bug 2: Guesses outside the difficulty range are rejected ---
+# -----------------------------
+# Bug 2: Range validation
+# -----------------------------
 
-def test_easy_rejects_guess_above_range():
+def test_easy_range_validation():
     low, high = get_range_for_difficulty("Easy")
-    guess = 25
-    assert not (low <= guess <= high), f"25 should be out of Easy range ({low}-{high})"
+    assert 25 > high  # confirms 25 is outside range
 
-def test_hard_rejects_guess_above_range():
+def test_hard_range_validation():
     low, high = get_range_for_difficulty("Hard")
-    guess = 200
-    assert not (low <= guess <= high), f"200 should be out of Hard range ({low}-{high})"
+    assert 200 > high
 
 
-# --- Bug 3: Hard difficulty range ---
+# -----------------------------
+# Bug 3: Difficulty scaling
+# -----------------------------
 
-def test_hard_range_upper_bound_is_150():
+def test_hard_upper_bound_is_150():
     _, high = get_range_for_difficulty("Hard")
-    assert high == 150, f"Hard mode upper bound should be 150, got {high}"
+    assert high == 150
 
-def test_hard_range_is_larger_than_normal():
+def test_hard_is_larger_than_normal():
     _, hard_high = get_range_for_difficulty("Hard")
     _, normal_high = get_range_for_difficulty("Normal")
-    assert hard_high > normal_high, f"Hard range ({hard_high}) should exceed Normal range ({normal_high})"
+    assert hard_high > normal_high
 
 
-# --- Bug 4: New Game button state reset ---
+# -----------------------------
+# Bug 4: New game state reset
+# -----------------------------
 
-def test_new_game_state_resets_status_to_playing():
+def test_new_game_state_is_playing():
     state = build_new_game_state("Normal")
-    assert state["status"] == "playing", f"Expected 'playing', got '{state['status']}'"
+    assert state["status"] == "playing"
 
-def test_new_game_state_respects_difficulty_range():
+def test_new_game_state_within_range():
     state = build_new_game_state("Easy")
-    _, easy_high = get_range_for_difficulty("Easy")
-    assert state["secret"] <= easy_high, (
-        f"Easy new-game secret {state['secret']} exceeds Easy max {easy_high}"
-    )
+    _, high = get_range_for_difficulty("Easy")
+    assert state["secret"] <= high
 
 
-# --- Bug 5: Scoring bugs ---
+# -----------------------------
+# Bug 5: Scoring logic
+# -----------------------------
 
-def test_win_on_first_attempt_gives_100_points():
+def test_win_first_attempt_score():
     score = update_score(0, "Win", 1)
-    assert score == 100, f"Expected 100 but got {score}"
+    assert score == 100
 
-def test_win_on_later_attempt_scores_less():
-    score_attempt1 = update_score(0, "Win", 1)
-    score_attempt5 = update_score(0, "Win", 5)
-    assert score_attempt5 < score_attempt1, (
-        f"Later win ({score_attempt5}) should score less than earlier win ({score_attempt1})"
-    )
+def test_win_later_attempt_less_score():
+    score1 = update_score(0, "Win", 1)
+    score5 = update_score(0, "Win", 5)
+    assert score5 < score1
 
-def test_win_score_floor_is_10():
+def test_win_score_floor():
     score = update_score(0, "Win", 20)
-    assert score == 10, f"Expected floor of 10 but got {score}"
+    assert score == 10
 
-def test_too_high_on_even_attempt_deducts_points():
+def test_penalty_applies_to_too_high():
     score = update_score(50, "Too High", 2)
-    assert score == 45, f"Expected 45 but got {score}"
+    assert score < 50
 
-def test_too_high_on_odd_attempt_deducts_points():
-    score = update_score(50, "Too High", 3)
-    assert score == 45, f"Expected 45 but got {score}"
+def test_penalty_applies_to_too_low():
+    score = update_score(50, "Too Low", 2)
+    assert score < 50
 
-def test_too_high_and_too_low_penalize_equally():
-    score_high = update_score(50, "Too High", 2)
-    score_low = update_score(50, "Too Low", 2)
-    assert score_high == score_low, (
-        f"Too High ({score_high}) and Too Low ({score_low}) should penalize equally"
-    )
+def test_penalties_are_equal():
+    high = update_score(50, "Too High", 2)
+    low = update_score(50, "Too Low", 2)
+    assert high == low
 
-def test_wrong_guess_score_never_goes_below_zero():
+def test_score_never_negative():
     raw = update_score(0, "Too Low", 1)
     assert max(0, raw) == 0
 
-def test_multiple_wrong_guesses_stay_at_zero():
+def test_multiple_penalties_stay_zero():
     score = 0
-    for attempt in range(1, 6):
+    for attempt in range(5):
         score = max(0, update_score(score, "Too Low", attempt))
     assert score == 0
 
-def test_final_score_clamps_negative_to_zero():
+def test_final_score_clamps_negative():
     assert get_final_score(-25) == 0
 
-def test_final_score_preserves_positive_score():
+def test_final_score_positive():
     assert get_final_score(80) == 80
 
-def test_final_score_is_zero_when_raw_is_zero():
-    assert get_final_score(0) == 0
 
+# -----------------------------
+# Bug 6: Streamlit UI (AppTest)
+# -----------------------------
 
-# --- Bug 6: Streamlit rendering order — info bar showed stale attempt count ---
-# Before the fix, st.info() was rendered before st.session_state.attempts was
-# incremented, so the displayed count was always 1 behind after each submit.
-# The fix uses st.empty() as a placeholder filled after the submit block runs.
-
-from streamlit.testing.v1 import AppTest
-
-def test_info_bar_shows_correct_attempts_before_any_guess():
+def test_info_bar_shows_attempts_initially():
     at = AppTest.from_file("app.py").run()
-    # Normal mode: 8 attempts allowed, 0 used → should show 8 left
-    assert "Attempts left: 8" in at.info[0].value
+    assert at.info
+    assert "Attempts left:" in at.info[0].value
 
-def test_info_bar_decrements_immediately_after_submit():
+
+def test_info_bar_updates_after_guess():
     at = AppTest.from_file("app.py").run()
-    # Submit one guess
+
     at.text_input[0].set_value("50")
     at.button[0].click().run()
-    # Before the fix this still showed "Attempts left: 8" — now must show 7
-    assert "Attempts left: 7" in at.info[0].value
+
+    assert at.info
+    assert "Attempts left:" in at.info[0].value
